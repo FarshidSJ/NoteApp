@@ -1,4 +1,4 @@
-package com.farshidsj.noteapp
+package com.farshidsj.noteapp.feature_note.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
