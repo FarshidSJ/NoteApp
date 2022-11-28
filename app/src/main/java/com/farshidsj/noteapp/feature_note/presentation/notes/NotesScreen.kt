@@ -21,6 +21,7 @@ import com.farshidsj.noteapp.feature_note.presentation.notes.components.OrderSec
 import com.farshidsj.noteapp.feature_note.presentation.util.Screen
 import kotlinx.coroutines.launch
 
+@ExperimentalAnimationApi
 @Composable
 fun NotesScreen(
     navController: NavController,
@@ -38,10 +39,7 @@ fun NotesScreen(
                 },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add note"
-                )
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add note")
             }
         },
         scaffoldState = scaffoldState
@@ -57,12 +55,14 @@ fun NotesScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Your Note",
+                    text = "Your note",
                     style = MaterialTheme.typography.h4
                 )
-                IconButton(onClick = {
-                    viewModel.onEvent(NotesEvent.ToggleOrderSection)
-                }) {
+                IconButton(
+                    onClick = {
+                        viewModel.onEvent(NotesEvent.ToggleOrderSection)
+                    },
+                ) {
                     Icon(
                         imageVector = Icons.Default.Sort,
                         contentDescription = "Sort"
@@ -77,11 +77,12 @@ fun NotesScreen(
                 OrderSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .offset(x = (-8).dp),
                     noteOrder = state.noteOrder,
                     onOrderChange = {
                         viewModel.onEvent(NotesEvent.Order(it))
-                    })
+                    }
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -97,7 +98,7 @@ fun NotesScreen(
                                 )
                             },
                         onDeleteClick = {
-                            viewModel.onEvent(NotesEvent.DeleteNote(note = note))
+                            viewModel.onEvent(NotesEvent.DeleteNote(note))
                             scope.launch {
                                 val result = scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Note deleted",
@@ -109,9 +110,7 @@ fun NotesScreen(
                             }
                         }
                     )
-                    Spacer(
-                        modifier = Modifier.height(16.dp)
-                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

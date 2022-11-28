@@ -33,7 +33,6 @@ fun AddEditNoteScreen(
     noteColor: Int,
     viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
-
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
 
@@ -48,14 +47,14 @@ fun AddEditNoteScreen(
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                AddEditNoteViewModel.UiEvent.SaveNote -> {
-                    navController.navigateUp()
-                }
+            when(event) {
                 is AddEditNoteViewModel.UiEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
+                }
+                is AddEditNoteViewModel.UiEvent.SaveNote -> {
+                    navController.navigateUp()
                 }
             }
         }
@@ -69,10 +68,7 @@ fun AddEditNoteScreen(
                 },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
-                Icon(
-                    imageVector = Icons.Default.Save,
-                    contentDescription = "SaveNote"
-                )
+                Icon(imageVector = Icons.Default.Save, contentDescription = "Save note")
             }
         },
         scaffoldState = scaffoldState
@@ -91,29 +87,30 @@ fun AddEditNoteScreen(
             ) {
                 Note.noteColors.forEach { color ->
                     val colorInt = color.toArgb()
-                    Box(modifier = Modifier
-                        .size(50.dp)
-                        .shadow(15.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .border(
-                            width = 3.dp,
-                            color = if (viewModel.noteColor.value == colorInt) {
-                                Color.Black
-                            } else Color.Transparent,
-                            shape = CircleShape
-                        )
-                        .clickable {
-                            scope.launch {
-                                noteBackgroundAnimatable.animateTo(
-                                    targetValue = Color(colorInt),
-                                    animationSpec = tween(
-                                        durationMillis = 500
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .shadow(15.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(color)
+                            .border(
+                                width = 3.dp,
+                                color = if (viewModel.noteColor.value == colorInt) {
+                                    Color.Black
+                                } else Color.Transparent,
+                                shape = CircleShape
+                            )
+                            .clickable {
+                                scope.launch {
+                                    noteBackgroundAnimatable.animateTo(
+                                        targetValue = Color(colorInt),
+                                        animationSpec = tween(
+                                            durationMillis = 500
+                                        )
                                     )
-                                )
+                                }
+                                viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
                             }
-                            viewModel.onEvent(AddEditNoteEvent.ChangeColor(colorInt))
-                        }
                     )
                 }
             }
@@ -142,11 +139,9 @@ fun AddEditNoteScreen(
                     viewModel.onEvent(AddEditNoteEvent.ChangeContentFocus(it))
                 },
                 isHintVisible = contentState.isHintVisible,
-                singleLine = true,
                 textStyle = MaterialTheme.typography.body1,
                 modifier = Modifier.fillMaxHeight()
             )
         }
     }
-
 }
